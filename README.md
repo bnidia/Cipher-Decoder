@@ -112,7 +112,7 @@ Now that Bob (you) has their **B**, you're just lacking one number (Alice's
 Compute the shared secret **S = A^b modp**, then send
 **B** to Alice, so she can compute the shared secret too.
 
-### Objectives
+### 2) Objectives
 
 At this stage, your program should:
 
@@ -147,3 +147,59 @@ The greater-than symbol followed by a space (```> ```) represents the tests' inp
     B is 364
     A is 336
     S is 224
+
+## Stage 3/3: Encrypt and decrypt
+
+### 1) Description
+
+Let's head onto encryption. In this stage, messages will be encrypted using the **Caesar cipher**. The Caesar cipher is a very simple algorithm, not well suited to any kind of real-world application outside of teaching purposes. Each letter of the alphabet is cyclically shifted down the alphabet by a certain number of positions. We can encrypt only letters; other characters will remain as they are. For example:
+
+If the shared secret number is **4**, then we shift each letter down by four positions:
+
+Plain	a	b	c	d	e	f	g	h	i	j	k	l	m	n	o	p	q	r	s	t	u	v	w	x	y	z
+
+Cipher	e	f	g	h	i	j	k	l	m	n	o	p	q	r	s	t	u	v	w	x	y	z	a	b	c	d
+
+Plaintext: ```This is a message.```
+
+Ciphertext: ```Xlmw mw e qiwweki.```
+
+In this stage, you need to encrypt the message ```Will you marry me?``` and send it to Alice. If her answer is ```Yeah, okay!```, encrypt ```Great!``` and send it back. If Alice's answer is ```Let's be friends.```, encrypt and output ```What a pity!``` Otherwise, don't print anything.
+
+### 2) Objectives
+
+At this stage, your program should:
+
+- Take **p** and **g** from the input;
+- Print ```OK```;
+- Compute **B**;
+- Take **A** from the input;
+- Compute the shared secret;
+- Print ```B is [B]```;
+- Encrypt the message ```Will you marry me?``` with the Caesar cipher and print the result;
+- Receive Alice's encrypted answer and decrypt it. If Alice's answer is ```Yeah, okay!```, encrypt ```Great!``` and print it. If Alice's answer is ```Let's be friends.```, encrypt ```What a pity!``` and output it. If the answer is anything else, don't print anything.
+
+### 3) Examples
+
+For the purposes of this stage, the tests are acting as "Alice" and your program responds as "Bob". The example below shows how your program should work.
+The greater-than symbol followed by a space (```> ```) represents the tests' input. Note that it's not part of the input.
+
+#### Example 1: success (Bob has chosen **b = 7** here, resulting in **s = 565**)
+
+    > g is 245 and p is 999
+    OK
+    > A is 232
+    B is 236
+    Pbee rhn ftkkr fx?  // Will you marry me?
+    > Rxta, hdtr!  // Yeah, okay!
+    Zkxtm!  // Great!
+
+#### Example 2: better luck next time (Bob has chosen **b = 7** here, resulting in **s = 565**)
+
+    > g is 245 and p is 999
+    OK
+    > A is 232
+    B is 236
+    Pbee rhn ftkkr fx?  // Will you marry me?
+    > Exm'l ux ykbxgwl.  // Let's be friends.
+    Patm t ibmr!  // What a pity!
