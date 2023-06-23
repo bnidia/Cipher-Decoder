@@ -1,6 +1,6 @@
 # Cipher-Decoder
 
-## The protocol
+## Stage 1/3: The protocol
 
 ### 1) Description
 
@@ -60,3 +60,90 @@ The greater-than symbol followed by a space (> ) represents the tests' input. No
 #### Example 1:
     > g is 245 and p is 999
     g = 245 and p = 999
+
+
+## Stage 2/3: A secret that we share
+
+### 1) Description
+In this stage, we need to figure out what secret number Alice and Bob (that's you) are going to use to communicate. We can reveal it through a series of computations. First, we need to find
+**B**. Recall from Stage 1 that this is produced by Bob picking a random natural number
+**b**, where **1 < b < p**, and performing the following calculation with the publicly-known
+**g** and **p**:
+
+**B = g^b mod p**
+
+For example, let's say **g = 3, b = 7, p = 23**.
+
+This is a relatively simple calculation to perform:
+
+**g^b mod p = 3^7 mod23 = 2187 mod 23 = 2.**
+
+In theory, this algorithm may work - a one-step computation seems easy enough, right? But what if
+**g** and **b** both are 100? Then, **g^b** is a number with more than two hundred digits! This won't be memory-efficient to compute and store (it might even cause an integer-overflow error, depending on the variable type you're using!). In real cryptography, the numbers are significantly more than 100, so we're going to need a more efficient algorithm.
+
+Through the mathematics of "Modular Exponentiation" we can find an alternative algorithm which avoids dealing with gigantic numbers. To perform this procedure, start off with
+**c = 1** (this is just a starter number for the calculation, which is always chosen as 1), then iteratively perform the following computation for successive values of c ("c-primes" - here, these are just used to store the result of the calculation so we can carry it forward into the next calculation):
+
+1) c′ = (c⋅g)modp
+2) c′′ = (c′⋅g)modp
+3) c′′′ = (c′′⋅g)modp
+4) ...
+
+If you perform this calculation **b**-times, the c-prime you end up with is guaranteed to equal the result for
+**B** you would've got from the previous memory-intensive calculation! Now you don't have to worry about those huge numbers! (You can reference the above linked Wikipedia article for a more detailed explanation if you want)
+
+If **g = 3, b = 7, p = 23**, then again starting off with
+**c = 1** we can work out:
+
+1) (1⋅3)mod23 = 3
+2) (3⋅3)mod23 = 9
+3) (9⋅3)mod23 = 4
+4) (4⋅3)mod23 = 12
+5) (12⋅3)mod23 = 13
+6) (13⋅3)mod23 = 16
+7) (16⋅3)mod23 = 2
+
+As you can see, the **b**-th (7th in this case) calculation reveals that
+**B=2**, which as promised is the same as the earlier, direct method of calculating it. Notice that while this involved more steps, the numbers stayed small. This will improve our program's memory efficiency because it won't have to deal with computing and storing giant numbers.
+
+Now that Bob (you) has their **B**, you're just lacking one number (Alice's
+**A**) to compute the shared secret. Alice will send it to you.
+
+Compute the shared secret **S = A^b modp**, then send
+**B** to Alice, so she can compute the shared secret too.
+
+### Objectives
+
+At this stage, your program should:
+
+- Take **p** and **g** from the input (same as in Stage 1);
+- Print OK;
+- Compute **B**;
+- Take **A** from the input;
+- Compute the shared secret (you're going to use this in Stage 3 to encrypt messages);
+- Print ```B is [B]```.
+- Print ```A is [A]```. (this won't be kept for the next stage; it's just for validating this stage)
+- Print ```S is [S]```. (this won't be kept for the next stage; it's just for validating this stage)
+
+### 3) Examples
+
+For the purposes of this stage, the tests are acting as "Alice" and your program responds as "Bob". The example below shows how your program should work.
+The greater-than symbol followed by a space (```> ```) represents the tests' input. Note that it's not part of the input.
+
+#### Example 1: a = 21, b = 15
+
+    > g is 245 and p is 999
+    OK
+    > A is 413
+    B is 179
+    A is 413
+    S is 512
+
+#### Example 2: a = 21, b = 15; different g and p
+
+    > g is 28 and p is 644
+    OK
+    > A is 336
+    B is 364
+    A is 336
+    S is 224
